@@ -8,17 +8,16 @@
 // Execute `rustlings hint threads1` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 use std::thread;
 use std::time::{Duration, Instant};
 
 fn main() {
     let mut handles = vec![];
-    for i in 0..10 {
+    let number = 20;
+    for i in 0..number {
         handles.push(thread::spawn(move || {
             let start = Instant::now();
-            thread::sleep(Duration::from_millis(250));
+            thread::sleep(Duration::from_millis(2 * (number - i)));
             println!("thread {} is complete", i);
             start.elapsed().as_millis()
         }));
@@ -26,10 +25,11 @@ fn main() {
 
     let mut results: Vec<u128> = vec![];
     for handle in handles {
-        // TODO: a struct is returned from thread::spawn, can you use it?
+        let value = handle.join().unwrap();
+        results.push(value);
     }
 
-    if results.len() != 10 {
+    if results.len() != number.try_into().unwrap() {
         panic!("Oh no! All the spawned threads did not finish!");
     }
 
